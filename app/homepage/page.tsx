@@ -11,10 +11,10 @@
   import paper from '../../public/images/paper.png';
 
   const LandingPage = () => {
-    const [projectName, setProjectName] = useState('');
-    const [projects, setProjects] = useState([]);
+    const [projectName, setProjectName] = useState<string>('');
+    const [projects, setProjects] = useState<string[]>([]);
     
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const handleSubmit = (event: { preventDefault: () => void; }) => {
       event.preventDefault();
     
