@@ -35,7 +35,7 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <p className='text-xs my-3'>New to Tododo? <a href="/register" className=' font-bold'>Sign Up Now</a></p>
+        <p className='text-xs my-3'>New to Tododo? <Link href="/register" className=' font-bold'>Sign Up Now</Link></p>
 
         <button type="submit" className='border h-10 text-xs px-2 mt-4 w-24 justify-center rounded-md flex items-center'>
           <p className='flex justify-center'>OK</p>

@@ -23,7 +23,7 @@
         name: projectName,
       };
     
-      setProjects([...projects, newProject]);
+      setProjects([...projects, newProject]= useState(""););
     
       setProjectName('');
     
@@ -51,31 +51,32 @@
         {/* ----------------------------------------- */}
         
         <div className='w-9/12 flex items-start '>
-          {projects.map((project, index) => (
-            <div key={index} className='project border rounded-2xl w-48 h-44  items-center justify-center bg-[#070019] mx-4'>
-              
-              <div className='flex flex-col justify-center items-center'>
-              <Link href='/project'>
-                <Image src={paper} alt={'paper'}></Image>
-                </Link>
-                <p className='flex justify-center'>{project.name} 
-    <Trash2
-        className='ml-2 cursor-pointer'
-        strokeWidth={1}
-        onClick={() => handleRemoveProject(project.id)}
-    />
-</p>
+        {projects.map((project, index) => (
+  <div key={index} className='project border rounded-2xl w-48 h-44 items-center justify-center bg-[#070019] mx-4'>
+    <div className='flex flex-col justify-center items-center'>
+    <Link href={`/project?name=${encodeURIComponent(project.name)}`} passHref>
+          <Image src={paper} alt={'paper'} />
+       
+      </Link>
+      <p className='flex justify-center'>
+        {project.name} 
+        <Trash2
+          className='ml-2 cursor-pointer'
+          strokeWidth={1}
+          onClick={() => handleRemoveProject(project.id)}
+        />
+      </p>
+    </div>
+  </div>
+))}
 
-              </div>
-            </div>
-          ))}
           <React.Fragment>
           <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
     <DialogTrigger>
-      <div className='border rounded-2xl w-48 h-44 flex items-center justify-center bg-[#070019] mx-4'>
+      <div className='border rounded-2xl w-48 h-44 flex items-center justify-center bg-[#070019] mx-4'   onClick={() => setIsDialogOpen(true)}>
         <p
           className='text-xl font-mono w-4 flex justify-center cursor-pointer'
-          onClick={() => setIsDialogOpen(true)}
+        
         >
           New Project
         </p>
