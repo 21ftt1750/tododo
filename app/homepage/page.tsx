@@ -35,6 +35,7 @@ const LandingPage = () => {
     setProjects((prevProjects) => prevProjects.filter((project) => project.id !== projectId));
   };
 
+  
   return (
     <div className='bg-[#00040D] w-screen h-screen relative flex justify-center items-start pt-48 text-white'>
       <Link href='/login' className='absolute top-0 left-0 mt-12 ml-16 flex items-center'>
