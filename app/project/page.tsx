@@ -116,9 +116,11 @@ const Page = () => {
           <div className='list h-96 w-96'>
             <ul>
               {listItems.map((item, index) => (
+                
                 <li className='flex items-center h-full my-3 text-lg' key={index}>
+                   {item.checkbox}
                   {item.text}
-                  {item.checkbox}
+                 
                 </li>
               ))}
             </ul>
