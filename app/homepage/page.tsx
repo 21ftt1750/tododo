@@ -74,10 +74,10 @@
           <React.Fragment>
           <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
     <DialogTrigger>
-      <div className='border rounded-2xl w-48 h-44 flex items-center justify-center bg-[#070019] mx-4'>
+      <div className='border rounded-2xl w-48 h-44 flex items-center justify-center bg-[#070019] mx-4' onClick={() => setIsDialogOpen(true)}>
         <p
           className='text-xl font-mono w-4 flex justify-center cursor-pointer'
-          onClick={() => setIsDialogOpen(true)}
+          
         >
           New Project
         </p>
