@@ -17,19 +17,18 @@
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const handleSubmit = (event: { preventDefault: () => void; }) => {
       event.preventDefault();
-    
       const newProject = {
         id: new Date().getTime(),
         name: projectName,
       };
-    
-      setProjects([...projects, newProject]= useState(""););
-    
+  
+      setProjects((prevProjects) => [...prevProjects, newProject]);
       setProjectName('');
-    
+  
       setIsDialogOpen(false);
     };
-    
+  
+  
 
     const handleRemoveProject = (projectId) => {
       setProjects((prevProjects) => prevProjects.filter((project) => project.id !== projectId));
