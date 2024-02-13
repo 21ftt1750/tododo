@@ -36,20 +36,21 @@
 
 
     return (
-      <div className='bg-[#00040D] w-screen h-screen relative flex justify-center items-start pt-48 text-white'>
-        <Link href='/login' className='absolute top-0 left-0 mt-12 ml-16 flex items-center'>
-          <ChevronLeft className='size-8' /> <Image src={logo} alt='' className='size-16' />
-        </Link>
-        <div className='absolute top-0 left-0 w-full flex justify-center pt-14'>
-          <p className='text-3xl'>Welcome to Todo<a href="" className='text-[#D298FF]'>do</a>!</p>
+      <div className='bg-[#00040D] w-screen h-screen relative  pt-8 text-white'>
+       <div className='  flex justify-center items-center pb-28'>
+        <div className='flex items-center w-1/3'>
+          <Image src={logo} alt='' className='size-16' />
         </div>
-        <Link href='/' className='absolute top-0 right-0 mt-16 mr-16 border rounded-md flex justify-center w-24 h-8 items-center'>
+          <p className='text-3xl w-1/3'>Welcome to Todo<a href="" className='text-[#D298FF]'>do</a>!</p>
+        <div className='w-1/4 flex justify-end'>
+        <Link href='/' className=' border rounded-md flex justify-center w-28 h-8 items-center'>
           <p className='text-sm font-mono'>Sign Out</p>
         </Link>
-
+        </div>
+</div>
         {/* ----------------------------------------- */}
         
-        <div className='w-9/12 flex items-start '>
+        <div className='w-9/12 flex items-start ml-32'>
         {projects.map((project, index) => (
   <div key={index} className='project border rounded-2xl w-48 h-44 items-center justify-center bg-[#070019] mx-4'>
     <div className='flex flex-col justify-center items-center'>
