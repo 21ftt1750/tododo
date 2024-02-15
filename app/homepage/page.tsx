@@ -4,7 +4,7 @@
   import logo from '../../public/images/logo.png';
   import { ChevronLeft, Trash2 } from 'lucide-react';
   import Link from 'next/link';
-  import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
+  import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 
   import { Input } from '@/components/ui/input';
   import { Button } from '@/components/ui/button';
@@ -60,15 +60,34 @@
       </Link>
       <p className='flex justify-center'>
         {project.name} 
-        <Trash2
-          className='ml-2 cursor-pointer'
-          strokeWidth={1}
-          onClick={() => handleRemoveProject(project.id)}
-        />
+        <Dialog>
+        <DialogTrigger>
+        <Trash2 className='ml-2 cursor-pointer'strokeWidth={1}/>
+        </DialogTrigger>
+        <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
+          <div>
+            <DialogTitle className='text-center'>Confirm Deletion</DialogTitle>
+            <p className='text-center text-sm mb-4'>Are you sure you want to delete this project?</p>
+            <div className='w-full flex justify-center'>
+              <DialogClose      
+        onClick={() => handleRemoveProject(project.id)} type="button" className='bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm mr-4'>
+                Yes
+              </DialogClose>
+              <DialogClose type="button" className='bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm'>
+                No
+              </DialogClose>
+            </div>
+          </div>
+        </DialogContent>
+
+       
+        </Dialog>
       </p>
     </div>
   </div>
 ))}
+
+
 
           <React.Fragment>
           <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
