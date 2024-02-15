@@ -2,7 +2,7 @@
   import React, { useState } from 'react';
   import Image from 'next/image';
   import logo from '../../public/images/logo.png';
-  import { ChevronLeft, Trash2 } from 'lucide-react';
+  import { ChevronLeft, Pen, Trash2 } from 'lucide-react';
   import Link from 'next/link';
   import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 
@@ -13,22 +13,44 @@
   const LandingPage = () => {
     const [projectName, setProjectName] = useState('');
     const [projects, setProjects] = useState([]);
-    
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const handleSubmit = (event: { preventDefault: () => void; }) => {
-      event.preventDefault();
-      const newProject = {
-        id: new Date().getTime(),
-        name: projectName,
-      };
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+const [editProjectIndex, setEditProjectIndex] = useState(null);
+
+const handleSubmit = (event) => {
+  event.preventDefault();
+
+  const updatedProjects = [...projects];
   
-      setProjects((prevProjects) => [...prevProjects, newProject]);
-      setProjectName('');
-  
-      setIsDialogOpen(false);
+  if (editProjectIndex !== null) {
+    // Editing existing project
+    updatedProjects[editProjectIndex].name = projectName;
+    setEditProjectIndex(null); // Reset edit index after successful edit
+  } else {
+    // Creating a new project
+    const newProject = {
+      id: new Date().getTime(),
+      name: projectName,
     };
-  
-  
+    updatedProjects.push(newProject);
+  }
+
+  setProjects(updatedProjects);
+  setProjectName('');
+  setIsDialogOpen(false);
+};
+const handleEditProject = (projectId) => {
+  const projectIndex = projects.findIndex((project) => project.id === projectId);
+
+  if (projectIndex !== -1) {
+    const project = projects[projectIndex];
+    setProjectName(project.name);
+    setEditProjectIndex(projectIndex);
+    setIsEditDialogOpen(true);
+  }
+};
+
 
     const handleRemoveProject = (projectId) => {
       setProjects((prevProjects) => prevProjects.filter((project) => project.id !== projectId));
@@ -49,17 +71,50 @@
         </div>
 </div>
         {/* ----------------------------------------- */}
+
+
         
         <div className='w-9/12 flex items-start ml-32'>
-        {projects.map((project, index) => (
+    {projects.map((project, index) => (
   <div key={index} className='project border rounded-2xl w-48 h-44 items-center justify-center bg-[#070019] mx-4'>
     <div className='flex flex-col justify-center items-center'>
-    <Link href={`/project?name=${encodeURIComponent(project.name)}`} passHref>
-          <Image src={paper} alt={'paper'} />
-       
+      <Link href={`/project?name=${encodeURIComponent(project.name)}`} passHref>
+        <Image src={paper} alt={'paper'} />
       </Link>
-      <p className='flex justify-center'>
+      <p className='flex justify-center text-lg'>
         {project.name} 
+        <Dialog>
+        <DialogTrigger onClick={() => handleEditProject(project.id)}>
+          <div className='ml-2 cursor-pointer'>
+          <Pen strokeWidth={1} />
+          </div>
+        </DialogTrigger>
+  <DialogContent className="bg-[#070019] text-white font-mono h-80 flex items-center justify-center">
+    <div className='w-full'>
+      <DialogTitle className='justify-center flex'>Edit Project Name:</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <div className="flex justify-center my-6">
+          <Input
+            id="name"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            className="bg-black border rounded-sm h-6 w-10/12"
+          />
+        </div>
+        <div className="flex justify-center">
+          <DialogClose type="submit" className='bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm mr-4 ' >
+            Ok
+          </DialogClose>
+          <DialogClose type="button" className='bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm'>
+            Cancel
+          </DialogClose>
+        </div>
+      </form>
+    </div>
+  </DialogContent>
+</Dialog>
+
+        
         <Dialog>
         <DialogTrigger>
         <Trash2 className='ml-2 cursor-pointer'strokeWidth={1}/>
