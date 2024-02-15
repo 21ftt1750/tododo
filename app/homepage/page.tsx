@@ -9,14 +9,30 @@
   import { Input } from '@/components/ui/input';
   import { Button } from '@/components/ui/button';
   import paper from '../../public/images/paper.png';
+  import { useEffect} from 'react';
+
 
   const LandingPage = () => {
     const [projectName, setProjectName] = useState('');
     const [projects, setProjects] = useState([]);
-
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-const [editProjectIndex, setEditProjectIndex] = useState(null);
+    const [editProjectIndex, setEditProjectIndex] = useState(null);
+    const [user, setUser] = useState();
+
+    useEffect(() => {
+     
+      const params = new URLSearchParams(window.location.search);
+      
+     
+      const userFromParams = params.get('user');
+      
+
+      console.log('User:', userFromParams);
+  
+      
+      setUser(userFromParams);
+    }, []);
 
 const handleSubmit = (event) => {
   event.preventDefault();
@@ -24,11 +40,11 @@ const handleSubmit = (event) => {
   const updatedProjects = [...projects];
   
   if (editProjectIndex !== null) {
-    // Editing existing project
+   
     updatedProjects[editProjectIndex].name = projectName;
-    setEditProjectIndex(null); // Reset edit index after successful edit
+    setEditProjectIndex(null); 
   } else {
-    // Creating a new project
+   
     const newProject = {
       id: new Date().getTime(),
       name: projectName,
@@ -65,9 +81,33 @@ const handleEditProject = (projectId) => {
         </div>
           <p className='text-3xl w-1/4'>Welcome to Todo<a href="" className='text-[#D298FF]'>do</a>!</p>
         <div className='w-1/4 flex justify-end'>
-        <Link href='/' className=' border rounded-md flex justify-center w-28 h-8 items-center'>
+          <p className='mr-4 flex items-end'>Hello, {user}!</p>
+          <Dialog>
+          <DialogTrigger className=' border rounded-md flex justify-center w-28 h-8 items-center'>
           <p className='text-sm font-mono'>Sign Out</p>
-        </Link>
+        </DialogTrigger>
+        <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
+          <div>
+            <DialogTitle className='text-center mb-2'>Confirm Sign Out</DialogTitle>
+            <p className='text-center text-sm mb-4'>Are you sure you want to Sign Out of {user}?</p>
+            <div className='w-full flex justify-center'>
+            <DialogClose
+          onClick={() => {
+            window.location.href = '/';
+          }}
+          type="button"
+          className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4'
+        >
+          Yes
+        </DialogClose>
+              <DialogClose type="button" className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm'>
+                No
+              </DialogClose>
+            </div>
+          </div>
+        </DialogContent>
+        </Dialog>
+        
         </div>
 </div>
         {/* ----------------------------------------- */}
@@ -78,10 +118,11 @@ const handleEditProject = (projectId) => {
     {projects.map((project, index) => (
   <div key={index} className='project border rounded-2xl w-48 h-44 items-center justify-center bg-[#070019] mx-4'>
     <div className='flex flex-col justify-center items-center'>
-      <Link href={`/project?name=${encodeURIComponent(project.name)}`} passHref>
+    <Link href={`/project?user=${encodeURIComponent(user)}&name=${encodeURIComponent(project.name)}`} passHref>
+
         <Image src={paper} alt={'paper'} />
       </Link>
-      <p className='flex justify-center text-lg'>
+      <p className='flex justify-center text-lg font-bold'>
         {project.name} 
         <Dialog>
         <DialogTrigger onClick={() => handleEditProject(project.id)}>
@@ -102,10 +143,10 @@ const handleEditProject = (projectId) => {
           />
         </div>
         <div className="flex justify-center">
-          <DialogClose type="submit" className='bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm mr-4 ' >
+          <DialogClose type="submit" className='bg-[#10142c] h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4 ' >
             Ok
           </DialogClose>
-          <DialogClose type="button" className='bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm'>
+          <DialogClose type="button" className='bg-[#10142c] h-10 w-16 rounded-md text-[#D298FF] text-sm'>
             Cancel
           </DialogClose>
         </div>
@@ -121,14 +162,14 @@ const handleEditProject = (projectId) => {
         </DialogTrigger>
         <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
           <div>
-            <DialogTitle className='text-center'>Confirm Deletion</DialogTitle>
+            <DialogTitle className='text-center mb-2'>Confirm Deletion</DialogTitle>
             <p className='text-center text-sm mb-4'>Are you sure you want to delete this project?</p>
             <div className='w-full flex justify-center'>
               <DialogClose      
-        onClick={() => handleRemoveProject(project.id)} type="button" className='bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm mr-4'>
+        onClick={() => handleRemoveProject(project.id)} type="button" className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4'>
                 Yes
               </DialogClose>
-              <DialogClose type="button" className='bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm'>
+              <DialogClose type="button" className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm'>
                 No
               </DialogClose>
             </div>

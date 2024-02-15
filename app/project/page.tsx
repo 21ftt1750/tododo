@@ -17,13 +17,17 @@ const Page = () => {
   const [projectName, setProjectName] = useState('');
   const [editingIndex, setEditingIndex] = useState(null);
   const [checkedCount, setCheckedCount] = useState(0); 
+  const [user, setUser] = useState();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
+    const userFromParams = queryParams.get('user');
+    console.log('User:', userFromParams);
+    setUser(userFromParams);
     const projectNameParam = queryParams.get('name');
     setProjectName(projectNameParam);
     console.log('Project Name:', projectName);
-  }, );
+  }, [projectName], );
   const handleCheckboxChange = (index) => {
     const updatedList = [...listItems];
     updatedList[index].checkbox = !updatedList[index].checkbox;
@@ -96,14 +100,16 @@ const Page = () => {
     <>
       <div className='relative w-full h-24 flex bg-[#00040D] text-white font-mono'>
         <div className='w-1/3 flex items-center justify-start'>
-          <Link href='/homepage' className='ml-8 flex items-center'>
+          <Link href={`/homepage?user=${encodeURIComponent(user)}`}  className='ml-8 flex items-center'>
             <ChevronLeft className='size-8' />
             <Image src={logo} alt='' className='size-16' />
           </Link>
         </div>
         <div className='w-1/3 flex items-center justify-center'><p className='text-2xl'>{projectName}</p></div>
         <div className='w-1/3 flex items-center justify-end'>
+        <p className='mr-4 flex items-end'>Hello, {user}!</p>
           <Link href='/' className='mr-8 border rounded-md flex justify-center w-24 h-8 items-center'>
+            
             <p className='text-sm font-mono'>Sign Out</p>
           </Link>
         </div>
@@ -182,13 +188,13 @@ const Page = () => {
              
         <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
           <div>
-            <DialogTitle className='text-center'>Confirm Deletion</DialogTitle>
+            <DialogTitle className='text-center mb-2'>Confirm Deletion</DialogTitle>
             <p className='text-center text-sm mb-4'>Are you sure you want to delete this item?</p>
             <div className='w-full flex justify-center'>
-              <DialogClose onClick={() => {onConfirm();handleDeleteItem(index);}} type="button" className='bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm mr-4'>
+              <DialogClose onClick={() => {onConfirm();handleDeleteItem(index);}} type="button" className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4'>
                 Yes
               </DialogClose>
-              <DialogClose onClick={onClose} type="button" className='bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm'>
+              <DialogClose onClick={onClose} type="button" className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm'>
                 No
               </DialogClose>
             </div>
