@@ -10,20 +10,20 @@ import { Button } from '@/components/ui/button';
 import { DialogClose } from '@radix-ui/react-dialog';
 
 const Page = () => {
-  const [listItems, setListItems] = useState([]);
-  const [newItem, setNewItem] = useState('');
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [projectName, setProjectName] = useState('');
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [checkedCount, setCheckedCount] = useState(0); 
+  const [listItems, setListItems] = useState<string>([]);
+  const [newItem, setNewItem] = useState<string>('');
+  const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState<boolean>(false);
+  const [projectName, setProjectName] = useState<string>('');
+  const [editingIndex, setEditingIndex] = useState<string>(null);
+  const [checkedCount, setCheckedCount] = useState<number>(0); 
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const projectNameParam = queryParams.get('name');
     setProjectName(projectNameParam);
     console.log('Project Name:', projectName);
-  }, );
+  }, [setProjectName,projectName]);
   const handleCheckboxChange = (index) => {
     const updatedList = [...listItems];
     updatedList[index].checkbox = !updatedList[index].checkbox;
