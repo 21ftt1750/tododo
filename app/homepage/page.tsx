@@ -81,7 +81,7 @@ const handleEditProject = (projectId) => {
         </div>
           <p className='text-3xl w-1/4'>Welcome to Todo<a href="" className='text-[#D298FF]'>do</a>!</p>
         <div className='w-1/4 flex justify-end'>
-          <p className='mr-4 flex items-end'>Hello, {user}!</p>
+          <p className='mr-4 flex items-end'>Hello, <a href="" className=' ml-1 font-bold uppercase  '>{user}</a>!</p>
           <Dialog>
           <DialogTrigger className=' border rounded-md flex justify-center w-28 h-8 items-center'>
           <p className='text-sm font-mono'>Sign Out</p>
@@ -89,7 +89,7 @@ const handleEditProject = (projectId) => {
         <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
           <div>
             <DialogTitle className='text-center mb-2'>Confirm Sign Out</DialogTitle>
-            <p className='text-center text-sm mb-4'>Are you sure you want to Sign Out of {user}?</p>
+            <p className='text-center text-sm mb-4'>Are you sure you want to Sign Out of <a href="" className=' font-bold uppercase'>{user}</a>?</p>
             <div className='w-full flex justify-center'>
             <DialogClose
           onClick={() => {

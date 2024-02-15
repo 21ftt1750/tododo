@@ -106,12 +106,33 @@ const Page = () => {
           </Link>
         </div>
         <div className='w-1/3 flex items-center justify-center'><p className='text-2xl'>{projectName}</p></div>
-        <div className='w-1/3 flex items-center justify-end'>
-        <p className='mr-4 flex items-end'>Hello, {user}!</p>
-          <Link href='/' className='mr-8 border rounded-md flex justify-center w-24 h-8 items-center'>
-            
-            <p className='text-sm font-mono'>Sign Out</p>
-          </Link>
+        <div className='w-1/3 mr-4 flex items-center justify-end'>
+        <p className='mr-2 flex items-end'>Hello, <a href="" className=' ml-1 font-bold uppercase  '>{user}</a>!</p>
+        <Dialog>
+          <DialogTrigger className=' border rounded-md flex justify-center w-28 h-8 items-center'>
+          <p className='text-sm font-mono'>Sign Out</p>
+        </DialogTrigger>
+        <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
+          <div>
+            <DialogTitle className='text-center mb-2'>Confirm Sign Out</DialogTitle>
+            <p className='text-center text-sm mb-4'>Are you sure you want to Sign Out of <a href="" className=' font-bold uppercase'>{user}</a>?</p>
+            <div className='w-full flex justify-center'>
+            <DialogClose
+          onClick={() => {
+            window.location.href = '/';
+          }}
+          type="button"
+          className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4'
+        >
+          Yes
+        </DialogClose>
+              <DialogClose type="button" className='bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm'>
+                No
+              </DialogClose>
+            </div>
+          </div>
+        </DialogContent>
+        </Dialog>
         </div>
       </div>
       <div className='relative bg-[#f5f5f5] h-96'>
