@@ -23,7 +23,7 @@ const Page = () => {
     const projectNameParam = queryParams.get('name');
     setProjectName(projectNameParam);
     console.log('Project Name:', projectName);
-  }, []);
+  }, );
   const handleCheckboxChange = (index) => {
     const updatedList = [...listItems];
     updatedList[index].checkbox = !updatedList[index].checkbox;
@@ -108,13 +108,13 @@ const Page = () => {
           </Link>
         </div>
       </div>
-      <div className='relative'>
+      <div className='relative bg-[#f5f5f5] h-96'>
         
         <Image src={background} alt={'background'} />
         
        
        
-        <div className='absolute top-0 left-0 ml-96 mt-32 text-white flex flex-col z-10'>
+        <div className='absolute top-0 left-0 ml-96 mt-32 text-white flex flex-col z-10 '>
           
           
           <div className='custom-input-container flex flex-col'>
@@ -155,7 +155,7 @@ const Page = () => {
         <div className='text-black absolute top-0 left-0 w-full h-full flex mt-36 justify-center'>  {checkedCount} <p>/</p> {listItems.length} <p className='ml-1 font-semibold'>Done</p></div>
         <div className='absolute top-0 left-0 w-full h-full flex items-center justify-center'>
           
-          <div className='list h-96 w-96 mt-10 overflow-y-auto'>
+          <div className='list h-96 w-96 mt-80 pt-3 overflow-y-auto'>
             
             <ul>
                  {listItems.map((item, index) => (  

@@ -41,7 +41,7 @@
         <div className='flex items-center w-1/3'>
           <Image src={logo} alt='' className='size-16' />
         </div>
-          <p className='text-3xl w-1/3'>Welcome to Todo<a href="" className='text-[#D298FF]'>do</a>!</p>
+          <p className='text-3xl w-1/4'>Welcome to Todo<a href="" className='text-[#D298FF]'>do</a>!</p>
         <div className='w-1/4 flex justify-end'>
         <Link href='/' className=' border rounded-md flex justify-center w-28 h-8 items-center'>
           <p className='text-sm font-mono'>Sign Out</p>
