@@ -14,8 +14,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
 
+interface ItemObject {
+  text: string;
+  checkbox: boolean;
+  edit: React.JSX.Element;
+  delete: React.JSX.Element;
+}
+
 const Page = () => {
-  const [listItems, setListItems] = useState([]);
+  const [listItems, setListItems] = useState<ItemObject[]>([]);
   const [newItem, setNewItem] = useState<string>("");
   const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
   const [isConfirmationVisible, setIsConfirmationVisible] =
