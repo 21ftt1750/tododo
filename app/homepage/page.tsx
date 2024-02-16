@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "../../public/images/logo.png";
 import { ChevronLeft, Pen, Trash2 } from "lucide-react";
@@ -22,12 +22,12 @@ interface Project {
 }
 
 const LandingPage = () => {
-  const [projectName, setProjectName] = useState("");
-  const [projects, setProjects] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [projectName, setProjectName] = useState<string>("");
+  const [projects, setProjects] = useState<string>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<string>("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [editProjectIndex, setEditProjectIndex] = useState(null);
-  const [user, setUser] = useState();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -36,7 +36,9 @@ const LandingPage = () => {
 
     console.log("User:", userFromParams);
 
-    setUser(userFromParams);
+    if (userFromParams !== null) {
+      setUser(userFromParams);
+    }
   }, []);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -44,17 +46,13 @@ const LandingPage = () => {
     const updatedProjects: Project[] = [...projects];
 
     if (editProjectIndex !== -1) {
-      // Editing existing project
       if (editProjectIndex >= 0 && editProjectIndex < updatedProjects.length) {
-        // Check if editProjectIndex is within bounds
         updatedProjects[editProjectIndex].name = projectName;
-        setEditProjectIndex(-1); // Reset edit index after successful edit
+        setEditProjectIndex(-1);
       } else {
-        // Handle invalid editProjectIndex
         console.error("Invalid editProjectIndex:", editProjectIndex);
       }
     } else {
-      // Creating a new project
       const newProject: Project = {
         id: new Date().getTime(),
         name: projectName,
