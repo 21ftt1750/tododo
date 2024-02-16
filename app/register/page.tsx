@@ -1,15 +1,20 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import logo from '../../public/images/logo.png';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
 const LandingPage = () => {
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
-    window.location.href = '/homepage'; 
+  const [username, setusername] = useState('');
+
+  const handleSubmit = (event) => {
     event.preventDefault();
-  
+   
+    const enteredUsername = username;
+    setusername(enteredUsername);
+
+    window.location.href = `/homepage?user=${encodeURIComponent(enteredUsername)}`;
   };
 
   return (
@@ -23,8 +28,8 @@ const LandingPage = () => {
 
         <div className='w-full  flex justify-center'>
           <div>
-            <p className='text-sm'>Email:</p>
-            <input className='border h-7 text-xs px-2 w-80 rounded-sm flex items-center bg-[#00040D]' required />
+            <p className='text-sm'>Username:</p>
+            <input className='border h-7 text-xs px-2 w-80 rounded-sm flex items-center bg-[#00040D]' value={username}  onChange={(e) => setusername(e.target.value)}  required />
           </div>
         </div>
 
