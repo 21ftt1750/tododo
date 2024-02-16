@@ -44,7 +44,7 @@ const Page = () => {
       setUser(userFromParams);
     }
 
-    const projectNameParam = queryParams.get("name");
+    const projectNameParam = queryParams.get("project");
     if (projectNameParam !== null) {
       setProjectName(projectNameParam);
     }
