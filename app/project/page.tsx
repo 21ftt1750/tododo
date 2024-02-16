@@ -21,12 +21,18 @@ interface ItemObject {
   delete: React.JSX.Element;
 }
 
+interface LoginItem {
+  userFromParams: string;
+  projectNameParam: string;
+}
+
 const Page = () => {
   const [listItems, setListItems] = useState<ItemObject[]>([]);
   const [newItem, setNewItem] = useState<string>("");
   const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
   const [isConfirmationVisible, setIsConfirmationVisible] =
     useState<boolean>(false);
+  const [user, setUser] = useState<string>("");
   const [projectName, setProjectName] = useState<string>("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [checkedCount, setCheckedCount] = useState<number>(0);
@@ -34,13 +40,16 @@ const Page = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const userFromParams = queryParams.get("user");
-    console.log("User:", userFromParams);
-    setUser(userFromParams);
+    if (userFromParams !== null) {
+      setUser(userFromParams);
+    }
+
     const projectNameParam = queryParams.get("name");
-    setProjectName(projectNameParam);
-    console.log("Project Name:", projectName);
+    if (projectNameParam !== null) {
+      setProjectName(projectNameParam);
+    }
   }, [projectName]);
-  const handleCheckboxChange = (index) => {
+  const handleCheckboxChange = (index: number) => {
     const updatedList = [...listItems];
     updatedList[index].checkbox = !updatedList[index].checkbox;
 
