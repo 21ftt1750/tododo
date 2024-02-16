@@ -23,19 +23,16 @@ interface Project {
 
 const LandingPage = () => {
   const [projectName, setProjectName] = useState<string>("");
-  const [projects, setProjects] = useState<string>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [user, setUser] = useState<string>("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
-  const [editProjectIndex, setEditProjectIndex] = useState(null);
+  const [editProjectIndex, setEditProjectIndex] = useState<number>(-1);
+  const [user, setUser] = useState<string>("");
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const userFromParams = params.get("user");
-
-    console.log("User:", userFromParams);
-
+    const queryParams = new URLSearchParams(window.location.search);
+    const userFromParams = queryParams.get("user");
     if (userFromParams !== null) {
       setUser(userFromParams);
     }
@@ -46,13 +43,17 @@ const LandingPage = () => {
     const updatedProjects: Project[] = [...projects];
 
     if (editProjectIndex !== -1) {
+      // Editing existing project
       if (editProjectIndex >= 0 && editProjectIndex < updatedProjects.length) {
+        // Check if editProjectIndex is within bounds
         updatedProjects[editProjectIndex].name = projectName;
-        setEditProjectIndex(-1);
+        setEditProjectIndex(-1); // Reset edit index after successful edit
       } else {
+        // Handle invalid editProjectIndex
         console.error("Invalid editProjectIndex:", editProjectIndex);
       }
     } else {
+      // Creating a new project
       const newProject: Project = {
         id: new Date().getTime(),
         name: projectName,
@@ -98,7 +99,7 @@ const LandingPage = () => {
           !
         </p>
         <div className="w-1/4 flex justify-end">
-          <p className="mr-4 flex items-end">
+          <p className="mr-2 flex items-end">
             Hello,{" "}
             <a href="" className=" ml-1 font-bold uppercase  ">
               {user}
@@ -153,14 +154,12 @@ const LandingPage = () => {
           >
             <div className="flex flex-col justify-center items-center">
               <Link
-                href={`/project?user=${encodeURIComponent(
-                  user
-                )}&name=${encodeURIComponent(project.name)}`}
+                href={`/project?name=${encodeURIComponent(project.name)}`}
                 passHref
               >
                 <Image src={paper} alt={"paper"} />
               </Link>
-              <p className="flex justify-center text-lg font-bold">
+              <p className="flex justify-center text-lg">
                 {project.name}
                 <Dialog>
                   <DialogTrigger onClick={() => handleEditProject(project.id)}>
@@ -185,13 +184,13 @@ const LandingPage = () => {
                         <div className="flex justify-center">
                           <DialogClose
                             type="submit"
-                            className="bg-[#10142c] h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4 "
+                            className="bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm mr-4 "
                           >
                             Ok
                           </DialogClose>
                           <DialogClose
                             type="button"
-                            className="bg-[#10142c] h-10 w-16 rounded-md text-[#D298FF] text-sm"
+                            className="bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm"
                           >
                             Cancel
                           </DialogClose>
@@ -207,7 +206,7 @@ const LandingPage = () => {
                   </DialogTrigger>
                   <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
                     <div>
-                      <DialogTitle className="text-center mb-2">
+                      <DialogTitle className="text-center">
                         Confirm Deletion
                       </DialogTitle>
                       <p className="text-center text-sm mb-4">
@@ -217,13 +216,13 @@ const LandingPage = () => {
                         <DialogClose
                           onClick={() => handleRemoveProject(project.id)}
                           type="button"
-                          className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
+                          className="bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm mr-4"
                         >
                           Yes
                         </DialogClose>
                         <DialogClose
                           type="button"
-                          className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm"
+                          className="bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm"
                         >
                           No
                         </DialogClose>
