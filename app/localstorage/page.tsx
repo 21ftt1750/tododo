@@ -1,15 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-const ExampleComponent = () => {
-  const [usernameInput, setUsernameInput] = useState<string>("");
-  const [itemInput, setItemInput] = useState<string>("");
-  const [storedUsernames, setStoredUsernames] = useState<
-    { username: string; items: string[] }[]
+const Page = () => {
+  const [listItems, setListItems] = useState<
+    { text: string; user: string; projectName: string }[]
   >([]);
-  const [queryUsername, setQueryUsername] = useState<string>("");
-  const [user2, setUser] = useState<string>("");
-  const [queriedItems, setQueriedItems] = useState<string[]>([]);
+  const [newItem, setNewItem] = useState<string>("");
+  const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
+  const [user, setUser] = useState<string>("");
+  const [projectName, setProjectName] = useState<string>("");
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -17,87 +16,79 @@ const ExampleComponent = () => {
     if (userFromParams !== null) {
       setUser(userFromParams);
     }
+
+    const projectNameParam = queryParams.get("project");
+    if (projectNameParam !== null) {
+      setProjectName(projectNameParam);
+    }
+  }, [projectName]);
+
+  const handleAddListItem = (newItemText: string) => {
+    // Retrieve the existing data from localStorage
+    const storedData = localStorage.getItem("listItems");
+
+    // Parse the existing data or initialize an empty array
+    const existingData = storedData ? JSON.parse(storedData) : [];
+
+    // Add the new item to the array with user and projectName
+    existingData.push({
+      text: newItemText,
+      user: user,
+      projectName: projectName,
+    });
+
+    // Save the updated data back to localStorage
+    localStorage.setItem("listItems", JSON.stringify(existingData));
+
+    // Update the state with the new data
+    setListItems(existingData);
+  };
+
+  useEffect(() => {
+    // Load listItems from localStorage on component mount
+    const storedListItems = localStorage.getItem("listItems");
+    if (storedListItems) {
+      setListItems(JSON.parse(storedListItems));
+    }
   }, []);
 
-  // Load data from localStorage on component mount
-  useEffect(() => {
-    const dataFromLocalStorage = localStorage.getItem("usernames");
-    if (dataFromLocalStorage) {
-      setStoredUsernames(JSON.parse(dataFromLocalStorage));
-    }
-
-    // Query the user from the stored usernames
-    const queriedUser = storedUsernames.find((user) => user.username === user2);
-
-    setQueriedItems(queriedUser?.items ?? []);
-
-    if (!queriedUser) {
-      setQueriedItems(["User not found"]);
-    }
-  }, [storedUsernames, user2]);
-
-  const handleSaveUsername = () => {
-    const existingUserIndex = storedUsernames.findIndex(
-      (user) => user.username === user2
-    );
-
-    if (existingUserIndex !== -1) {
-      // If the username already exists, append the new item
-      const updatedUsernames = [...storedUsernames];
-      updatedUsernames[existingUserIndex].items.push(itemInput);
-      localStorage.setItem("usernames", JSON.stringify(updatedUsernames));
-      setStoredUsernames(updatedUsernames);
-    } else {
-      // If the username is new, create a new entry
-      const updatedUsernames = [
-        ...storedUsernames,
-        { username: user2, items: [itemInput] },
-      ];
-      localStorage.setItem("usernames", JSON.stringify(updatedUsernames));
-      setStoredUsernames(updatedUsernames);
-    }
-
-    setUsernameInput("");
-    setItemInput("");
-  };
-
-  const handleClearUsernames = () => {
-    localStorage.removeItem("usernames");
-    setStoredUsernames([]);
-  };
+  const filteredItems = listItems.filter(
+    (item) => item.user === user && item.projectName === projectName
+  );
 
   return (
-    <div>
-      <p>Stored items:</p>
-      <ul>
-        {storedUsernames.map((user, index) => (
-          <li key={index}>
-            {user.username} - {user.items.join(", ")}
-          </li>
-        ))}
-      </ul>
+    <>
       <div>
-        <input
-          type="text"
-          value={usernameInput}
-          onChange={(e) => setUsernameInput(e.target.value)}
-          placeholder="Enter username..."
-        />
-        <input
-          type="text"
-          value={itemInput}
-          onChange={(e) => setItemInput(e.target.value)}
-          placeholder="Enter item..."
-        />
-        <button onClick={handleSaveUsername}>Save Username</button>
-        <button onClick={handleClearUsernames}>Clear Usernames</button>
+        <button onClick={() => setIsDialogVisible(true)}>Add Item</button>
       </div>
 
       <div>
-        <p>Queried Items: {queriedItems}</p>
+        {filteredItems.map((item, index) => (
+          <div key={index}>{item.text}</div>
+        ))}
       </div>
-    </div>
+
+      {isDialogVisible && (
+        <div>
+          <input
+            type="text"
+            placeholder="Enter new item"
+            value={newItem}
+            onChange={(e) => setNewItem(e.target.value)}
+          />
+          <button
+            onClick={() => {
+              handleAddListItem(newItem);
+              setIsDialogVisible(false);
+              setNewItem("");
+            }}
+          >
+            Add
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 
-export default ExampleComponent;
+export default Page;

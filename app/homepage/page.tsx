@@ -59,7 +59,6 @@ const LandingPage = () => {
     setQueriedItems(queriedUser?.items ?? []);
 
     if (!queriedUser) {
-      setQueriedItems(["User not found"]);
     }
   }, [storedUsernames, user2]);
 
@@ -197,7 +196,9 @@ const LandingPage = () => {
             >
               <div className="flex flex-col justify-center items-center">
                 <Link
-                  href={`/project?project=${encodeURIComponent(item)}`}
+                  href={`/project?project=${encodeURIComponent(
+                    item
+                  )}&user=${encodeURIComponent(user2)}`}
                   passHref
                 >
                   <Image src={paper} alt={"paper"} />
