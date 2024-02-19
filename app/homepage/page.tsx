@@ -54,7 +54,6 @@ const LandingPage = () => {
   }, []);
 
   useEffect(() => {
-    // Query the user from the stored usernames
     const queriedUser = storedUsernames.find((user) => user.username === user2);
 
     setQueriedItems(queriedUser?.items ?? []);
@@ -70,13 +69,13 @@ const LandingPage = () => {
     );
 
     if (existingUserIndex !== -1) {
-      // If the username already exists, append the new item
+      // username already exists
       const updatedUsernames = [...storedUsernames];
       updatedUsernames[existingUserIndex].items.push(itemInput);
       localStorage.setItem("usernames", JSON.stringify(updatedUsernames));
       setStoredUsernames(updatedUsernames);
     } else {
-      // If the username is new, create a new entry
+      // username is new
       const updatedUsernames = [
         ...storedUsernames,
         { username: user2, items: [itemInput] },
@@ -89,45 +88,46 @@ const LandingPage = () => {
     setItemInput("");
   };
 
-  const handleClearUsernames = () => {
-    const updatedUsernames = [...storedUsernames];
+  const handleClearProject = (username: string, itemIndex: number) => {
+    const updatedUsernames = storedUsernames.map((user) => ({ ...user }));
     const userIndex = updatedUsernames.findIndex(
-      (user) => user.username === user2
+      (user) => user.username === username
     );
 
-    if (userIndex !== -1) {
-      // Remove the specific item from the user's items
-      updatedUsernames[userIndex].items = updatedUsernames[
-        userIndex
-      ].items.filter((item) => item !== projectName);
+    if (
+      userIndex !== -1 &&
+      itemIndex >= 0 &&
+      itemIndex < updatedUsernames[userIndex].items.length
+    ) {
+      updatedUsernames[userIndex].items.splice(itemIndex, 1);
 
-      // Update the local storage and state
       localStorage.setItem("usernames", JSON.stringify(updatedUsernames));
       setStoredUsernames(updatedUsernames);
     }
+
+    setIsDialogOpen(false);
   };
 
-  const handleEditProjectName = (index: number) => {
-    const updatedUsernames = [...storedUsernames];
-
-    // Ensure the index is valid
-    if (index >= 0 && index < updatedUsernames.length) {
-      const editedProject = updatedUsernames[index];
-
-      // Update the project name with the new value
-      editedProject.items = editedProject.items.map((item) =>
-        item === projectName ? itemInput : item
+  const handleEditProjectName = (username: string, itemIndex: number) => {
+    if (itemIndex !== -1) {
+      const updatedUsernames = [...storedUsernames];
+      const userIndex = updatedUsernames.findIndex(
+        (user) => user.username === username
       );
 
-      // Update the local storage and state
-      localStorage.setItem("usernames", JSON.stringify(updatedUsernames));
-      setStoredUsernames(updatedUsernames);
+      if (
+        userIndex !== -1 &&
+        itemIndex >= 0 &&
+        itemIndex < updatedUsernames[userIndex].items.length
+      ) {
+        updatedUsernames[userIndex].items[itemIndex] = projectName;
+
+        localStorage.setItem("usernames", JSON.stringify(updatedUsernames));
+        setStoredUsernames(updatedUsernames);
+        setIsEditDialogOpen(false);
+      }
     }
-
-    // Close the edit dialog
-    setIsEditDialogOpen(false);
   };
-
   return (
     <div className="bg-[#00040D] w-screen h-screen relative  pt-8 text-white">
       <div className="  flex justify-center items-center pb-28">
@@ -207,7 +207,14 @@ const LandingPage = () => {
                   <Dialog>
                     <DialogTrigger>
                       <div className="ml-2 cursor-pointer">
-                        <Pen strokeWidth={1} />
+                        <Pen
+                          strokeWidth={1}
+                          onClick={() => {
+                            setProjectName(queriedItems[index]);
+                            setEditProjectIndex(index);
+                            setIsEditDialogOpen(true);
+                          }}
+                        />
                       </div>
                     </DialogTrigger>
                     <DialogContent className="bg-[#070019] text-white font-mono h-80 flex items-center justify-center">
@@ -226,7 +233,9 @@ const LandingPage = () => {
                           </div>
                           <div className="flex justify-center">
                             <DialogClose
-                              type="submit"
+                              onClick={() =>
+                                handleEditProjectName(user2, index)
+                              }
                               className="bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm mr-4 "
                             >
                               Ok
@@ -258,7 +267,7 @@ const LandingPage = () => {
                         <div className="w-full flex justify-center">
                           <DialogClose
                             type="button"
-                            onClick={handleClearUsernames}
+                            onClick={() => handleClearProject(user2, index)}
                             className="bg-[#10142c] h-6 w-14 rounded-md text-[#D298FF] text-sm mr-4"
                           >
                             Yes

@@ -10,7 +10,7 @@ const LandingPage = () => {
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    // Save username to localStorage
+    // Save username
     const userObject = { username: usernameInput, items: [] };
     const storedUsernames = JSON.parse(
       localStorage.getItem("usernames") || "[]"
@@ -18,7 +18,6 @@ const LandingPage = () => {
     storedUsernames.push(userObject);
     localStorage.setItem("usernames", JSON.stringify(storedUsernames));
 
-    // Redirect to homepage
     window.location.href = `/homepage?user=${encodeURIComponent(
       usernameInput
     )}`;
