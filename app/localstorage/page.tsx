@@ -29,6 +29,8 @@ const Page = () => {
     { text: string; user: string; projectName: string; isChecked: boolean }[]
   >([]);
 
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+
   useEffect(() => {
     const storedListItems = localStorage.getItem("listItems");
     if (storedListItems) {
@@ -72,17 +74,75 @@ const Page = () => {
       setProjectListItems(filteredProjectItems);
     }
   };
-
   const handleCheckboxToggle = (index: number) => {
     const updatedProjectListItems = [...projectListItems];
     updatedProjectListItems[index].isChecked =
       !updatedProjectListItems[index].isChecked;
 
     setProjectListItems(updatedProjectListItems);
-    localStorage.setItem("listItems", JSON.stringify(updatedProjectListItems));
+
+    // Retrieve existing items from local storage
+    const storedListItems = localStorage.getItem("listItems");
+    const existingData = storedListItems ? JSON.parse(storedListItems) : [];
+
+    // Update the specific item in existingData
+    existingData.forEach((item: any, i: any) => {
+      if (
+        item.user === user &&
+        item.projectName === projectName &&
+        i === index
+      ) {
+        item.isChecked = !item.isChecked;
+      }
+    });
+
+    // Set the updated items back to local storage
+    localStorage.setItem("listItems", JSON.stringify(existingData));
   };
 
-  const handleEditItem = (index: any) => {};
+  const handleEditItem = (index: number) => {
+    if (!isDialogVisible) {
+      setEditIndex(index);
+      setIsDialogVisible(true);
+      setNewItem(projectListItems[index]?.text || "");
+    }
+  };
+
+  const handleSaveEdit = () => {
+    if (editIndex !== null) {
+      const updatedProjectListItems = [...projectListItems];
+      const editedItem = updatedProjectListItems[editIndex];
+
+      if (editedItem.user === user && editedItem.projectName === projectName) {
+        editedItem.text = newItem;
+
+        // Retrieve existing items from local storage
+        const storedListItems = localStorage.getItem("listItems");
+        const existingData = storedListItems ? JSON.parse(storedListItems) : [];
+
+        // Update the specific item in existingData
+        existingData.forEach((item: any, index: any) => {
+          if (
+            item.user === user &&
+            item.projectName === projectName &&
+            index === editIndex
+          ) {
+            item.text = newItem;
+          }
+        });
+
+        // Set the updated items back to local storage
+        localStorage.setItem("listItems", JSON.stringify(existingData));
+
+        // Update state
+        setProjectListItems(updatedProjectListItems);
+      }
+    }
+
+    setEditIndex(null);
+    setIsDialogVisible(false);
+    setNewItem("");
+  };
 
   const handleDeleteItem = (index: number) => {
     const storedListItems = localStorage.getItem("listItems");
@@ -95,14 +155,15 @@ const Page = () => {
       if (index >= 0 && index < updatedProjectListItems.length) {
         updatedProjectListItems.splice(index, 1);
 
+        // Update localStorage
         const allItems = JSON.parse(localStorage.getItem("listItems") || "[]");
         const updatedItems = allItems.filter(
           (item: any) => item.user !== user || item.projectName !== projectName
         );
         updatedItems.push(...updatedProjectListItems);
-
         localStorage.setItem("listItems", JSON.stringify(updatedItems));
 
+        // Update state
         setProjectListItems(updatedProjectListItems);
       }
     }
@@ -245,7 +306,54 @@ const Page = () => {
                       checked={item.isChecked}
                       onChange={() => handleCheckboxToggle(index)}
                     />
-                    <Pen className="size-5 ml-2" onClick={handleEditItem} />
+                    <Pen
+                      className="size-5 ml-2"
+                      onClick={() =>
+                        handleEditItem(editIndex !== null ? editIndex : 0)
+                      }
+                    />
+                    {isDialogVisible && (
+                      <Dialog open={isDialogVisible}>
+                        <DialogContent className="bg-[#070019] text-white font-mono h-80 flex items-center justify-center">
+                          <div>
+                            <DialogTitle className="justify-center flex ">
+                              {editIndex !== null
+                                ? "Edit item:"
+                                : "Add new item:"}
+                            </DialogTitle>
+                            <input
+                              type="text"
+                              placeholder=""
+                              value={newItem}
+                              onChange={(e) => setNewItem(e.target.value)}
+                              className="custom-input bg-black border-white border w-80 mt-2  rounded-sm"
+                            />
+                            <div className="w-full flex justify-center mt-4">
+                              <button
+                                onClick={() => {
+                                  editIndex !== null
+                                    ? handleSaveEdit()
+                                    : handleAddListItem(newItem);
+                                }}
+                                className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
+                              >
+                                Ok
+                              </button>
+                              <DialogClose
+                                onClick={() => {
+                                  setEditIndex(null);
+                                  setIsDialogVisible(false);
+                                  setNewItem("");
+                                }}
+                                className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
+                              >
+                                Cancel
+                              </DialogClose>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                     <Dialog>
                       <DialogTrigger>
                         <Trash className="size-5 ml-2" />
