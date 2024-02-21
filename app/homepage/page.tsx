@@ -196,7 +196,7 @@ const LandingPage = () => {
             >
               <div className="flex flex-col justify-center items-center">
                 <Link
-                  href={`/localstorage?project=${encodeURIComponent(
+                  href={`/project?project=${encodeURIComponent(
                     item
                   )}&user=${encodeURIComponent(user2)}`}
                   passHref
