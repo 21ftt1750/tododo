@@ -196,7 +196,7 @@ const LandingPage = () => {
             >
               <div className="flex flex-col justify-center items-center">
                 <Link
-                  href={`/project?project=${encodeURIComponent(
+                  href={`/localstorage?project=${encodeURIComponent(
                     item
                   )}&user=${encodeURIComponent(user2)}`}
                   passHref
@@ -223,32 +223,29 @@ const LandingPage = () => {
                         <DialogTitle className="justify-center flex">
                           Edit Project Name:
                         </DialogTitle>
-                        <form>
-                          <div className="flex justify-center my-6">
-                            <Input
-                              id="name"
-                              value={projectName}
-                              onChange={(e) => setProjectName(e.target.value)}
-                              className="bg-black border rounded-sm h-6 w-10/12"
-                            />
-                          </div>
-                          <div className="flex justify-center">
-                            <DialogClose
-                              onClick={() =>
-                                handleEditProjectName(user2, index)
-                              }
-                              className="bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm mr-4 "
-                            >
-                              Ok
-                            </DialogClose>
-                            <DialogClose
-                              type="button"
-                              className="bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm"
-                            >
-                              Cancel
-                            </DialogClose>
-                          </div>
-                        </form>
+
+                        <div className="flex justify-center my-6">
+                          <Input
+                            id="name"
+                            value={projectName}
+                            onChange={(e) => setProjectName(e.target.value)}
+                            className="bg-black border rounded-sm h-6 w-10/12"
+                          />
+                        </div>
+                        <div className="flex justify-center">
+                          <DialogClose
+                            onClick={() => handleEditProjectName(user2, index)}
+                            className="bg-[#10142c] h-8 w-16 rounded-md text-[#D298FF] text-sm mr-4"
+                          >
+                            Ok
+                          </DialogClose>
+                          <DialogClose
+                            type="button"
+                            className="bg-[#10142c] h-8 w-16 rounded-md text-[#D298FF] text-sm "
+                          >
+                            Cancel
+                          </DialogClose>
+                        </div>
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -320,14 +317,14 @@ const LandingPage = () => {
                     handleSaveUsername();
                     setIsDialogOpen(false);
                   }}
-                  className="bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm mr-4 "
+                  className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
                 >
                   Ok
                 </DialogClose>
                 <DialogClose
                   type="button"
                   onClick={() => setIsDialogOpen(false)}
-                  className="bg-[#10142c] h-6 w-14 text-[#D298FF] text-sm"
+                  className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm "
                 >
                   Cancel
                 </DialogClose>
