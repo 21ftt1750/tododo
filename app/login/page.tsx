@@ -13,7 +13,7 @@ const LandingPage = () => {
     const enteredusername = event.target.username.value;
     setusername(enteredusername);
 
-    window.location.href = `/homepage?user=${encodeURIComponent(
+    window.location.href = `/verify?user=${encodeURIComponent(
       enteredusername
     )}`;
   };

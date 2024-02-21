@@ -49,7 +49,7 @@ const Page = () => {
                 <DialogTitle className="text-center mb-2">
                   Username does not exist
                 </DialogTitle>
-                <p>{`${userFromParams} does not exist, please sign up first. Redirecting to login...`}</p>
+                <p className="w-full text-center pb-2">{`${userFromParams} does not exist, please sign up first. Redirecting to login...`}</p>
                 <div className="w-full flex justify-center">
                   <button
                     onClick={handleDialogClose}
