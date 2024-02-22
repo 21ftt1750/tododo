@@ -98,28 +98,6 @@ const Page = () => {
   };
 
   const handleEditItem = (index: number) => {
-    setEditIndex(index);
-    setEditItemText(projectListItems[index]?.text || "");
-  };
-
-  const handleSaveEdit = () => {
-    if (editIndex !== null) {
-      const updatedProjectListItems = [...projectListItems];
-      const editedItem = updatedProjectListItems[editIndex];
-
-      if (editedItem.user === user && editedItem.projectName === projectName) {
-        editedItem.text = editItemText;
-
-        // Update the local state
-        setProjectListItems(updatedProjectListItems);
-      }
-    }
-
-    setEditIndex(null);
-    setEditItemText("");
-  };
-
-  useEffect(() => {
     if (editIndex !== null) {
       const storedListItems = localStorage.getItem("listItems");
       const existingData = storedListItems ? JSON.parse(storedListItems) : [];
@@ -128,7 +106,7 @@ const Page = () => {
         if (
           item.user === user &&
           item.projectName === projectName &&
-          item.text === editItemText
+          item.text === projectListItems[editIndex].text
         ) {
           return { ...item, text: editItemText };
         }
@@ -136,8 +114,17 @@ const Page = () => {
       });
 
       localStorage.setItem("listItems", JSON.stringify(updatedData));
+
+      // Update the state with filtered items
+      const filteredItems = updatedData.filter(
+        (item: any) => item.user === user && item.projectName === projectName
+      );
+      setProjectListItems(filteredItems);
+
+      setEditIndex(null);
+      setEditItemText("");
     }
-  }, [editItemText, editIndex, user, projectName]);
+  };
 
   const handleDeleteItem = (index: number) => {
     const storedListItems = localStorage.getItem("listItems");
@@ -304,7 +291,10 @@ const Page = () => {
                       <DialogTrigger>
                         <Pen
                           className="size-5 ml-2"
-                          onClick={() => handleEditItem(index)}
+                          onClick={() => {
+                            setEditIndex(index);
+                            setEditItemText(item.text);
+                          }}
                         />
                       </DialogTrigger>
 
@@ -324,16 +314,13 @@ const Page = () => {
 
                           <div className="w-full flex justify-center mt-4">
                             <DialogClose
-                              onClick={() => handleSaveEdit()}
                               className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
+                              onClick={() => handleEditItem(index)}
                             >
                               Ok
                             </DialogClose>
                             <DialogClose
-                              onClick={() => {
-                                setEditIndex(null);
-                                setEditItemText("");
-                              }}
+                              onClick={() => {}}
                               className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
                             >
                               Cancel
