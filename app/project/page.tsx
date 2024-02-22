@@ -14,9 +14,13 @@ import {
 } from "@/components/ui/dialog";
 
 const Page = () => {
-  const queryParams = new URLSearchParams(window.location.search);
-  const userFromParams = queryParams.get("user") || "";
-  const projectNameParam = queryParams.get("project") || "";
+  const queryParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+
+  const userFromParams = queryParams?.get("user") || "";
+  const projectNameParam = queryParams?.get("project") || "";
 
   const [user, setUser] = useState<string>(userFromParams);
   const [projectName, setProjectName] = useState<string>(projectNameParam);

@@ -17,8 +17,11 @@ const checkLocalStorage = (username: string) => {
 };
 
 const Page = () => {
-  const queryParams = new URLSearchParams(window.location.search);
-  const userFromParams = queryParams.get("user") || "";
+  const queryParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+  const userFromParams = queryParams?.get("user") || "";
 
   const [userExists, setUserExists] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
