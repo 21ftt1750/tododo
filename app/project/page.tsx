@@ -270,13 +270,10 @@ const Page = () => {
         </div>
 
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-          <div className="list h-96 w-96 mt-80 pt-3 overflow-y-auto">
-            <ul>
+          <div className="list h-96 w-4/12 flex justify-center  mt-80 pt-3 overflow-y-auto ">
+            <ul className="w-96">
               {projectListItems.map((item, index) => (
-                <li
-                  className="flex items-center h-full  my-3 text-lg"
-                  key={index}
-                >
+                <li className="flex items-center  my-3 text-lg" key={index}>
                   <span className="mr-2">{index + 1}.</span>
                   {item.text}
                   <div className="flex justify-end w-full">
