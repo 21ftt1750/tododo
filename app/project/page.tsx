@@ -10,116 +10,147 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DialogClose } from "@radix-ui/react-dialog";
-
-interface ItemObject {
-  text: string;
-  checkbox: boolean;
-  edit: React.JSX.Element;
-  delete: React.JSX.Element;
-}
-
-interface LoginItem {
-  userFromParams: string;
-  projectNameParam: string;
-}
 
 const Page = () => {
-  const [listItems, setListItems] = useState<ItemObject[]>([]);
+  const queryParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+
+  const userFromParams = queryParams?.get("user") || "";
+  const projectNameParam = queryParams?.get("project") || "";
+
+  const [user, setUser] = useState<string>(userFromParams);
+  const [projectName, setProjectName] = useState<string>(projectNameParam);
+  const [projectListItems, setProjectListItems] = useState<
+    { text: string; user: string; projectName: string; isChecked: boolean }[]
+  >([]);
   const [newItem, setNewItem] = useState<string>("");
   const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
-  const [isConfirmationVisible, setIsConfirmationVisible] =
-    useState<boolean>(false);
-  const [user, setUser] = useState<string>("");
-  const [projectName, setProjectName] = useState<string>("");
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [checkedCount, setCheckedCount] = useState<number>(0);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editItemText, setEditItemText] = useState<string>("");
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const userFromParams = queryParams.get("user");
-    if (userFromParams !== null) {
-      setUser(userFromParams);
-    }
-
-    const projectNameParam = queryParams.get("name");
-    if (projectNameParam !== null) {
-      setProjectName(projectNameParam);
-    }
-  }, [projectName]);
-  const handleCheckboxChange = (index: number) => {
-    const updatedList = [...listItems];
-    updatedList[index].checkbox = !updatedList[index].checkbox;
-
-    setCheckedCount((prevCount) =>
-      updatedList[index].checkbox ? prevCount + 1 : prevCount - 1
-    );
-
-    setListItems(updatedList);
-  };
-
-  const onConfirm = () => {
-    setIsConfirmationVisible(false);
-  };
-
-  const onClose = () => {
-    setIsConfirmationVisible(false);
-  };
-
-  const handleEditItem = (index: any) => {
-    setEditingIndex(index);
-    setIsDialogVisible(true);
-    setNewItem(listItems[index].text);
-  };
-
-  const handleDeleteItem = (index: any) => {
-    if (isConfirmationVisible) {
-      const updatedList = [...listItems];
-
-      const deleteIndex = editingIndex !== null ? editingIndex : index;
-
-      updatedList.splice(deleteIndex, 1);
-      setListItems(updatedList);
-      setIsConfirmationVisible(false);
-      setEditingIndex(null);
+    const storedListItems = localStorage.getItem("listItems");
+    if (storedListItems) {
+      const allListItems = JSON.parse(storedListItems);
+      const filteredProjectItems = allListItems.filter(
+        (item: any) => item.user === user && item.projectName === projectName
+      );
+      setProjectListItems(filteredProjectItems);
     } else {
-      setIsConfirmationVisible(true);
+      setProjectListItems([]);
+    }
+  }, [user, projectName]);
+
+  useEffect(() => {
+    setUser((prevUser) => userFromParams || prevUser);
+    setProjectName((prevProjectName) => projectNameParam || prevProjectName);
+  }, [userFromParams, projectNameParam]);
+
+  const handleAddListItem = (newItemText: string) => {
+    const storedListItems = localStorage.getItem("listItems");
+    const existingData = storedListItems ? JSON.parse(storedListItems) : [];
+
+    const newItem = {
+      text: newItemText,
+      user: user,
+      projectName: projectName,
+      isChecked: false,
+    };
+
+    const updatedProjectListItems = [...existingData, newItem];
+
+    localStorage.setItem("listItems", JSON.stringify(updatedProjectListItems));
+
+    const latestStoredItems = localStorage.getItem("listItems");
+    if (latestStoredItems) {
+      const latestData = JSON.parse(latestStoredItems);
+      const filteredProjectItems = latestData.filter(
+        (item: any) => item.user === user && item.projectName === projectName
+      );
+
+      setProjectListItems(filteredProjectItems);
+    }
+    setNewItem("");
+    setIsDialogVisible(false);
+  };
+
+  const handleCheckboxToggle = (index: number) => {
+    const updatedProjectListItems = [...projectListItems];
+    updatedProjectListItems[index].isChecked =
+      !updatedProjectListItems[index].isChecked;
+    setProjectListItems(updatedProjectListItems);
+
+    const storedListItems = localStorage.getItem("listItems");
+    const existingData = storedListItems ? JSON.parse(storedListItems) : [];
+
+    const updatedData = existingData.map((item: any) => {
+      if (
+        item.user === user &&
+        item.projectName === projectName &&
+        item.text === updatedProjectListItems[index].text
+      ) {
+        return { ...item, isChecked: !item.isChecked };
+      }
+      return item;
+    });
+
+    localStorage.setItem("listItems", JSON.stringify(updatedData));
+  };
+
+  const handleEditItem = (index: number) => {
+    if (editIndex !== null) {
+      const storedListItems = localStorage.getItem("listItems");
+      const existingData = storedListItems ? JSON.parse(storedListItems) : [];
+
+      const updatedData = existingData.map((item: any) => {
+        if (
+          item.user === user &&
+          item.projectName === projectName &&
+          item.text === projectListItems[editIndex].text
+        ) {
+          return { ...item, text: editItemText };
+        }
+        return item;
+      });
+
+      localStorage.setItem("listItems", JSON.stringify(updatedData));
+
+      // Update the state with filtered items
+      const filteredItems = updatedData.filter(
+        (item: any) => item.user === user && item.projectName === projectName
+      );
+      setProjectListItems(filteredItems);
+
+      setEditIndex(null);
+      setEditItemText("");
     }
   };
 
-  const handleAddListItem = () => {
-    if (newItem.trim() !== "") {
-      const newItemObject = {
-        checkbox: false,
-        text: newItem,
-        edit: (
-          <button onClick={() => handleEditItem(editingIndex)}>
-            <Pen className="size-4 ml-2" />
-          </button>
-        ),
-        delete: (
-          <button onClick={() => handleDeleteItem(editingIndex)}>
-            <Trash className="size-4 ml-2" />
-          </button>
-        ),
-      };
+  const handleDeleteItem = (index: number) => {
+    const storedListItems = localStorage.getItem("listItems");
+    if (storedListItems) {
+      const prevItems = JSON.parse(storedListItems);
+      const updatedProjectListItems = prevItems.filter(
+        (item: any) => item.user === user && item.projectName === projectName
+      );
 
-      if (editingIndex !== null) {
-        const updatedList = [...listItems];
-        updatedList[editingIndex] = newItemObject;
-        setListItems(updatedList);
-        setEditingIndex(null);
-      } else {
-        setListItems((prevItems) => [...prevItems, newItemObject]);
+      if (index >= 0 && index < updatedProjectListItems.length) {
+        updatedProjectListItems.splice(index, 1);
+
+        const allItems = JSON.parse(localStorage.getItem("listItems") || "[]");
+        const updatedItems = allItems.filter(
+          (item: any) => item.user !== user || item.projectName !== projectName
+        );
+        updatedItems.push(...updatedProjectListItems);
+        localStorage.setItem("listItems", JSON.stringify(updatedItems));
+
+        setProjectListItems(updatedProjectListItems);
       }
-
-      setNewItem("");
     }
-
-    setIsDialogVisible(false);
-    setIsConfirmationVisible(false);
   };
 
   return (
@@ -183,11 +214,19 @@ const Page = () => {
           </Dialog>
         </div>
       </div>
+
       <div className="relative bg-[#f5f5f5] h-96">
         <Image src={background} alt={"background"} />
-
         <div className="absolute top-0 left-0 ml-96 mt-32 text-white flex flex-col z-10 ">
           <div className="custom-input-container flex flex-col">
+            <button
+              onClick={() => setIsDialogVisible(true)}
+              className={`bg-black size-10 rounded-md ${
+                isDialogVisible ? "hidden" : ""
+              }`}
+            >
+              +
+            </button>
             {isDialogVisible && (
               <Dialog open={isDialogVisible}>
                 <DialogContent className="bg-[#070019] text-white font-mono h-80 flex items-center justify-center">
@@ -203,65 +242,99 @@ const Page = () => {
                       className="custom-input bg-black border-white border w-80 mt-2  rounded-sm"
                     />
                     <div className="w-full flex justify-center mt-4">
-                      <Button
-                        onClick={handleAddListItem}
-                        type="button"
-                        className="mr-4 text-[#D298FF] text-sm"
+                      <DialogClose
+                        onClick={() => {
+                          setIsDialogVisible(false);
+                          handleAddListItem(newItem);
+                          setNewItem("");
+                        }}
+                        className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
                       >
-                        ok
-                      </Button>
-                      <Button
-                        onClick={() => setIsDialogVisible(false)}
-                        type="button"
-                        className="text-[#D298FF] text-sm"
+                        Ok
+                      </DialogClose>
+                      <DialogClose
+                        onClick={() => {
+                          setIsDialogVisible(false);
+                        }}
+                        className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
                       >
                         Cancel
-                      </Button>
+                      </DialogClose>
                     </div>
                   </div>
                 </DialogContent>
               </Dialog>
             )}
-            <button
-              onClick={() => setIsDialogVisible(true)}
-              className={`bg-black size-10 rounded-md ${
-                isDialogVisible ? "hidden" : ""
-              }`}
-            >
-              +
-            </button>
           </div>
         </div>
+
         <div className="text-black absolute top-0 left-0 w-full h-full flex mt-36 justify-center">
-          {" "}
-          {checkedCount} <p>/</p> {listItems.length}{" "}
-          <p className="ml-1 font-semibold">Done</p>
+          {projectListItems.filter((item) => item.isChecked).length} <p>/</p>{" "}
+          {projectListItems.length} <p className="ml-1 font-semibold">Done</p>
         </div>
+
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-          <div className="list h-96 w-96 mt-80 pt-3 overflow-y-auto">
-            <ul>
-              {listItems.map((item, index) => (
-                <li
-                  className="flex items-center h-full  my-3 text-lg"
-                  key={index}
-                >
+          <div className="list h-96 w-4/12 flex justify-center  mt-80 pt-3 overflow-y-auto ">
+            <ul className="w-96">
+              {projectListItems.map((item, index) => (
+                <li className="flex items-center  my-3 text-lg" key={index}>
                   <span className="mr-2">{index + 1}.</span>
                   {item.text}
                   <div className="flex justify-end w-full">
                     <input
                       type="checkbox"
-                      checked={item.checkbox}
-                      onChange={() => handleCheckboxChange(index)}
                       className="ml-6 size-5"
+                      checked={item.isChecked}
+                      onChange={() => handleCheckboxToggle(index)}
                     />
-                    <button onClick={() => handleEditItem(index)}>
-                      <Pen className="size-5 ml-2" />
-                    </button>
+
                     <Dialog>
-                      <DialogTrigger onClick={() => handleDeleteItem(index)}>
-                        <Trash className="size-5 ml-2" />
+                      <DialogTrigger>
+                        <Pen
+                          className="size-5 ml-2"
+                          onClick={() => {
+                            setEditIndex(index);
+                            setEditItemText(item.text);
+                          }}
+                        />
                       </DialogTrigger>
 
+                      <DialogContent className="bg-[#070019] text-white font-mono h-80 flex items-center justify-center">
+                        <div>
+                          <DialogTitle className="justify-center flex ">
+                            Edit item:
+                          </DialogTitle>
+
+                          <input
+                            type="text"
+                            placeholder=""
+                            value={editItemText}
+                            onChange={(e) => setEditItemText(e.target.value)}
+                            className="custom-input bg-black border-white border w-80 mt-2  rounded-sm"
+                          />
+
+                          <div className="w-full flex justify-center mt-4">
+                            <DialogClose
+                              className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
+                              onClick={() => handleEditItem(index)}
+                            >
+                              Ok
+                            </DialogClose>
+                            <DialogClose
+                              onClick={() => {}}
+                              className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
+                            >
+                              Cancel
+                            </DialogClose>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger>
+                        <Trash className="size-5 ml-2" />
+                      </DialogTrigger>
                       <DialogContent className="bg-[#070019] text-white font-mono h-40 flex items-center justify-center">
                         <div>
                           <DialogTitle className="text-center mb-2">
@@ -272,17 +345,13 @@ const Page = () => {
                           </p>
                           <div className="w-full flex justify-center">
                             <DialogClose
-                              onClick={() => {
-                                onConfirm();
-                                handleDeleteItem(index);
-                              }}
+                              onClick={() => handleDeleteItem(index)}
                               type="button"
                               className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm mr-4"
                             >
                               Yes
                             </DialogClose>
                             <DialogClose
-                              onClick={onClose}
                               type="button"
                               className="bg-[#10142c]  h-10 w-16 rounded-md text-[#D298FF] text-sm"
                             >
